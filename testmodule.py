@@ -85,11 +85,28 @@ def TxTest():
                     print("timeout")
                     processStatus = False
                     flag = True
+        
         serialPort.write(bytes("AT\r\n", 'UTF-8'))
         
-        while serialPort.in_waiting > 0:
-            responseText = serialPort.readline()
-            print(responseText)
+        if processStatus == True:    
+            # OK待ち
+            flag = False
+            cnt = 0
+            while flag == False:
+                if serialPort.in_waiting > 0:
+                    responseText = serialPort.readline()
+                    print(responseText)
+                    
+                    if responseText == b"OK\r\n":
+                        flag = True
+                
+                sleep(0.1)
+                cnt = cnt + 1
+                
+                if cnt > 50:
+                    print("timeout")
+                    processStatus = False
+                    flag = True
             
 if __name__ == '__main__':
     TxTest()
