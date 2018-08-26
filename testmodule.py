@@ -19,7 +19,7 @@ class Test:
         if self.__serialPort.out_waiting > 0:
             self.__serialPort.reset_output_buffer()
     
-    def WaitForText(self, waitString, timeOut):
+    def __waitForText(self, waitString, timeOut):
         flag = False
         cnt = 0
         while flag == False:
@@ -40,12 +40,28 @@ class Test:
     def __writeText(self, sendMessage):
         self.__serialPort.write(sendMessage.encode())
     
-    def SendMessage(self, sendMessage, waitMessage, replyTimeOut):
+    def __sendMessage(self, sendMessage, waitMessage, replyTimeOut):
         self.__writeText(sendMessage)
-        self.WaitForText(waitMessage, replyTimeOut)
+        self.__waitForText(waitMessage, replyTimeOut)
     
     def Disconnect(self):
         self.__serialPort.close()
+        
+    def WaitForReady(self):
+        self.__waitForText(waitString="ready\r\n", timeOut=50)
+    
+    def WaitForWIFICONNECT(self):
+        self.__waitForText(waitString="WIFI CONNECTED\r\n", timeOut=50)
+    
+    def WaitForGOTIP(self):
+        self.__waitForText(waitString="WIFI GOT IP\r\n", timeOut=100)
+    
+    def SendAT(self):
+        self.__sendMessage(sendMessage="AT\r\n", waitMessage="OK\r\n", replyTimeOut=50)
+        
+    def SendCIFSR(self):
+        self.__sendMessage(sendMessage="AT+CIFSR\r\n", waitMessage="OK\r\n", replyTimeOut=100)
+        
 def TxTest():
     
     test = Test()
@@ -61,16 +77,19 @@ def TxTest():
     
     if input_text == "OK":  
         # ready待ち
-        test.WaitForText(waitString="ready\r\n", timeOut=5)
+        test.WaitForReady()
         
         # WIFI CONNECTED待ち
-        test.WaitForText(waitString="WIFI CONNECTED\r\n", timeOut=5)
+        test.WaitForWIFICONNECT()
         
         # WIFI GOT IP待ち
-        test.WaitForText(waitString="WIFI GOT IP\r\n", timeOut=10)
+        test.WaitForGOTIP()
         
         # AT transmit
-        test.SendMessage(sendMessage="AT\r\n", waitMessage="OK\r\n", replyTimeOut=5)
+        test.SendAT()
+        
+        # CIFSR
+        test.SendCIFSR()
         
         # disconnect
         test.Disconnect()
