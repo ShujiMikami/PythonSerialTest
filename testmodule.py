@@ -19,7 +19,7 @@ class Test:
         if self.__serialPort.out_waiting > 0:
             self.__serialPort.reset_output_buffer()
     
-    def __waitForText(self, waitString, timeOut):
+    def WaitForText(self, waitString, timeOut):
         flag = False
         cnt = 0
         while flag == False:
@@ -42,19 +42,15 @@ class Test:
     
     def SendMessage(self, sendMessage, waitMessage, replyTimeOut):
         self.__writeText(sendMessage)
-        self.__waitForText(waitMessage, replyTimeOut)
+        self.WaitForText(waitMessage, replyTimeOut)
     
     def Disconnect(self):
         self.__serialPort.close()
 def TxTest():
-    processStatus = True
     
-    serialPort = serial.Serial(port="/dev/tty.usbserial-AH01KQHK", baudrate=115200, timeout=5, parity=serial.PARITY_NONE)
+    test = Test()
     
-    serialPort.reset_input_buffer()
-    
-    if serialPort.out_waiting > 0:
-        serialPort.reset_output_buffer()
+    test.Connect()
     
     print("push reset button")
     
@@ -65,86 +61,20 @@ def TxTest():
     
     if input_text == "OK":  
         # ready待ち
-        flag = False
-        cnt = 0
-        while flag == False:
-            if serialPort.in_waiting > 0:
-                responseText = serialPort.readline()
-                print(responseText)
-                
-                if responseText == b"ready\r\n":
-                    flag = True
-            
-            sleep(0.1)
-            cnt = cnt + 1
-            
-            if cnt > 50:
-                print("timeout")
-                processStatus = False
-                flag = True
+        test.WaitForText(waitString="ready\r\n", timeOut=5)
         
-        if processStatus == True:    
-            # WIFI CONNECTED待ち
-            flag = False
-            cnt = 0
-            while flag == False:
-                if serialPort.in_waiting > 0:
-                    responseText = serialPort.readline()
-                    print(responseText)
-                    
-                    if responseText == b"WIFI CONNECTED\r\n":
-                        flag = True
-                
-                sleep(0.1)
-                cnt = cnt + 1
-                
-                if cnt > 50:
-                    print("timeout")
-                    processStatus = False
-                    flag = True
+        # WIFI CONNECTED待ち
+        test.WaitForText(waitString="WIFI CONNECTED\r\n", timeOut=5)
         
-        if processStatus == True:    
-            # WIFI GOT IP待ち
-            flag = False
-            cnt = 0
-            while flag == False:
-                if serialPort.in_waiting > 0:
-                    responseText = serialPort.readline()
-                    print(responseText)
-                    
-                    if responseText == b"WIFI GOT IP\r\n":
-                        flag = True
-                
-                sleep(0.1)
-                cnt = cnt + 1
-                
-                if cnt > 50:
-                    print("timeout")
-                    processStatus = False
-                    flag = True
+        # WIFI GOT IP待ち
+        test.WaitForText(waitString="WIFI GOT IP\r\n", timeOut=10)
         
-        serialPort.write(bytes("AT\r\n", 'UTF-8'))
+        # AT transmit
+        test.SendMessage(sendMessage="AT\r\n", waitMessage="OK\r\n", replyTimeOut=5)
         
-        if processStatus == True:    
-            # OK待ち
-            flag = False
-            cnt = 0
-            while flag == False:
-                if serialPort.in_waiting > 0:
-                    responseText = serialPort.readline()
-                    print(responseText)
-                    
-                    if responseText == b"OK\r\n":
-                        flag = True
+        # disconnect
+        test.Disconnect()
                 
-                sleep(0.1)
-                cnt = cnt + 1
-                
-                if cnt > 50:
-                    print("timeout")
-                    processStatus = False
-                    flag = True
-    serialPort.close()        
 if __name__ == '__main__':
     TxTest()
     
