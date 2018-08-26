@@ -61,7 +61,12 @@ class Test:
         
     def SendCIFSR(self):
         self.__sendMessage(sendMessage="AT+CIFSR\r\n", waitMessage="OK\r\n", replyTimeOut=100)
-        
+    
+    def EnableCIPMUX(self):
+        self.__sendMessage(sendMessage="AT+CIPMUX=1\r\n", waitMessage="OK\r\n", replyTimeOut=100)
+    
+    def DisableCPIMUX(self):
+        self.__sendMessage(sendMessage="AT+CIPMUX=0\r\n", waitMessage="OK\r\n", replyTimeOut=100) 
 def TxTest():
     
     test = Test()
