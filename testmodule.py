@@ -107,7 +107,7 @@ def TxTest():
                     print("timeout")
                     processStatus = False
                     flag = True
-            
+    serialPort.close()        
 if __name__ == '__main__':
     TxTest()
     
