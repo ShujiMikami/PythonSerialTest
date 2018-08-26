@@ -67,6 +67,9 @@ class Test:
     
     def DisableCPIMUX(self):
         self.__sendMessage(sendMessage="AT+CIPMUX=0\r\n", waitMessage="OK\r\n", replyTimeOut=100) 
+    
+    def TCPServerEnable(self, port):
+        self.__sendMessage(sendMessage="AT+CIPSERVER=1,%d\r\n" % port, waitMessage="OK\r\n", replyTimeOut=100)
 def TxTest():
     
     test = Test()
@@ -95,6 +98,12 @@ def TxTest():
         
         # CIFSR
         test.SendCIFSR()
+        
+        # CIPMUX
+        test.EnableCIPMUX()
+        
+        # TCPServer
+        test.TCPServerEnable(8888)
         
         # disconnect
         test.Disconnect()
