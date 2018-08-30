@@ -70,6 +70,20 @@ class Test:
     
     def TCPServerEnable(self, port):
         self.__sendMessage(sendMessage="AT+CIPSERVER=1,%d\r\n" % port, waitMessage="OK\r\n", replyTimeOut=100)
+    
+    def CheckClientConnection(self):
+        result = False
+        if self.__serialPort.in_waiting > 0:
+            responseText = self.__serialPort.readline()
+            print(responseText)
+                
+            if responseText.find(",CONNECT\r\n") >= 0:
+                result = True
+                print("Client detected %d" % responseText.split(",")[0])
+            
+        return result
+                
+    
 def TxTest():
     
     test = Test()
@@ -104,6 +118,11 @@ def TxTest():
         
         # TCPServer
         test.TCPServerEnable(8888)
+        
+        while True:
+            test.CheckClientConnection()
+            sleep(0.1)
+        
         
         # disconnect
         test.Disconnect()
