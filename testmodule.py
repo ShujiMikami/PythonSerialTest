@@ -82,7 +82,23 @@ class Test:
                 print("Client detected %s" % responseText.decode().split(",")[0])
             
         return result
-                
+    def RoutineLoop(self):
+        responseText = None
+        
+        if self.__serialPort.in_waiting > 0:
+            responseByte = self.__serialPort.readline()
+            responseText = responseByte.decode()
+        if responseText != None:
+            # detect CONNECT
+            if responseText.find(",CONNECT\r\n") >= 0:
+                print("detected client connection : key is %s" % responseText.split(",")[0])
+            # detect CLOSED
+            if responseText.find(",CLOSED\r\n") >= 0:
+                print("detected client disconnection : key is %s" % responseText.split(",")[0])
+            # detect +IPD
+            if responseText.find("+IPD,") >= 0:
+                print("detected client message send : client key is %s, byte size is %s" % (responseText.split(":")[0].split(",")[1], responseText.split(":")[0].split(",")[2]))
+            
     
 def TxTest():
     
@@ -120,8 +136,9 @@ def TxTest():
         test.TCPServerEnable(8888)
         
         while True:
-            test.CheckClientConnection()
+            # test.CheckClientConnection()
             sleep(0.1)
+            test.RoutineLoop()
         
         
         # disconnect
