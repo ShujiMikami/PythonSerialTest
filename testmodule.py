@@ -98,7 +98,7 @@ class Test:
             # detect +IPD
             if responseText.find("+IPD,") >= 0:
                 print("detected client message send : client key is %s, byte size is %s" % (responseText.split(":")[0].split(",")[1], responseText.split(":")[0].split(",")[2]))
-            
+                
     
 def TxTest():
     
