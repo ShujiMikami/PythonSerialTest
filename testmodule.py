@@ -77,9 +77,9 @@ class Test:
             responseText = self.__serialPort.readline()
             print(responseText)
                 
-            if responseText.find(",CONNECT\r\n") >= 0:
+            if responseText.decode().find(",CONNECT\r\n") >= 0:
                 result = True
-                print("Client detected %d" % responseText.split(",")[0])
+                print("Client detected %s" % responseText.decode().split(",")[0])
             
         return result
                 
