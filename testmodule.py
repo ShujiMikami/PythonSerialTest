@@ -82,6 +82,23 @@ class Test:
                 print("Client detected %s" % responseText.decode().split(",")[0])
             
         return result
+    
+    def ReplyHTTPMessage(self, clientID):
+        headerToReply = """HTTP/1.1 200 OK
+        Date: Sat, 1 Sep 2018 15:08:05 GMT
+        Content-type: text/html
+        
+        \r\n"""
+        
+        htmlToShow = "<html><body>It works!</body></html>\r\n"
+        
+        wholeLength = len(headerToReply) + len(htmlToShow)
+        
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, wholeLength), waitMessage="OK\r\n>", replyTimeOut=100)
+        
+        self.__sendMessage(sendMessage=headerToReply+htmlToShow, waitMessage="Recv %d bytes\r\n" % wholeLength, replyTimeOut=100)
+        
+    
     def RoutineLoop(self):
         responseText = None
         
@@ -98,14 +115,14 @@ class Test:
             # detect +IPD
             if responseText.find("+IPD,") >= 0:
                 print("detected client message send : client key is %s, byte size is %s" % (responseText.split(":")[0].split(",")[1], responseText.split(":")[0].split(",")[2]))
-                print("first message is %s" % responseText.split(":")[1])
-                wholeLength = responseText.split(":")[0].split(",")[2].encode()
+                print(responseText.split(":")[1])
+                wholeLength = int(responseText.split(":")[0].split(",")[2])
                 leftLength = wholeLength - len(responseText.split(":")[1])
-                leftBytes = self.__serialPort.readline(leftLength)
+                leftBytes = self.__serialPort.read(leftLength)
                 leftText = leftBytes.decode()
                 print(leftText)
                 
-                
+                self.ReplyHTTPMessage(0)
     
 def TxTest():
     
