@@ -99,6 +99,12 @@ class Test:
             if responseText.find("+IPD,") >= 0:
                 print("detected client message send : client key is %s, byte size is %s" % (responseText.split(":")[0].split(",")[1], responseText.split(":")[0].split(",")[2]))
                 print("first message is %s" % responseText.split(":")[1])
+                wholeLength = responseText.split(":")[0].split(",")[2].encode()
+                leftLength = wholeLength - len(responseText.split(":")[1])
+                leftBytes = self.__serialPort.readline(leftLength)
+                leftText = leftBytes.decode()
+                print(leftText)
+                
                 
     
 def TxTest():
