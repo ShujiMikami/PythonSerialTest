@@ -59,6 +59,9 @@ class Test:
     
     def SendAT(self):
         self.__sendMessage(sendMessage="AT\r\n", waitMessage="OK\r\n", replyTimeOut=50)
+    
+    def SendRST(self):
+        self.__sendMessage(sendMessage="AT+RST\r\n", waitMessage="OK\r\n", replyTimeOut=100)
         
     def SendCIFSR(self):
         self.__sendMessage(sendMessage="AT+CIFSR\r\n", waitMessage="OK\r\n", replyTimeOut=100)
@@ -132,12 +135,16 @@ def TxTest():
     
     test.Connect()
     
-    print("push reset button")
+    #print("push reset button")
     
-    print("type OK when button is pushed")
-    print(">>> ")
+    #print("type OK when button is pushed")
+    #print(">>> ")
     
-    input_text = raw_input()
+    #input_text = raw_input()
+    
+    test.SendRST()
+    
+    input_text = "OK"
     
     if input_text == "OK":  
         # ready待ち
