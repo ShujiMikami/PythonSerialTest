@@ -84,20 +84,31 @@ class Test:
         return result
     
     def ReplyHTTPMessage(self, clientID):
-        headerToReply = """HTTP/1.1 200 OK
-        Date: Sat, 1 Sep 2018 15:08:05 GMT
-        Content-type: text/html
-        
-        \r\n"""
-        
+        headerToReply1 = "HTTP/1.1 200 OK\r\n"
+        headerToReply2 = "Date: Sat, 1 Sep 2018 15:08:05 GMT\r\n"
+        headerToReply3 = "Content-type: text/html\r\n"
+        headerToReply4 = "\r\n"
+
         htmlToShow = "<html><body>It works!</body></html>\r\n"
         
-        wholeLength = len(headerToReply) + len(htmlToShow)
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerToReply1)), waitMessage="> ", replyTimeOut=100)
+        self.__sendMessage(sendMessage=headerToReply1, waitMessage="Recv %d bytes\r\n" % len(headerToReply1), replyTimeOut=100)
         
-        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, wholeLength), waitMessage="OK\r\n>", replyTimeOut=100)
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerToReply2)), waitMessage="> ", replyTimeOut=100)
+        self.__sendMessage(sendMessage=headerToReply2, waitMessage="Recv %d bytes\r\n" % len(headerToReply2), replyTimeOut=100)
         
-        self.__sendMessage(sendMessage=headerToReply+htmlToShow, waitMessage="Recv %d bytes\r\n" % wholeLength, replyTimeOut=100)
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerToReply3)), waitMessage="> ", replyTimeOut=100)
+        self.__sendMessage(sendMessage=headerToReply3, waitMessage="Recv %d bytes\r\n" % len(headerToReply3), replyTimeOut=100)
         
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerToReply4)), waitMessage="> ", replyTimeOut=100)
+        self.__sendMessage(sendMessage=headerToReply4, waitMessage="Recv %d bytes\r\n" % len(headerToReply4), replyTimeOut=100)
+        
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(htmlToShow)), waitMessage="> ", replyTimeOut=100)
+        self.__sendMessage(sendMessage=htmlToShow, waitMessage="Recv %d bytes\r\n" % len(htmlToShow), replyTimeOut=100)
+        
+        #self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerToReply1 + headerToReply2 + headerToReply3 + headerToReply4 + htmlToShow)), waitMessage="> ", replyTimeOut=100)
+        #self.__sendMessage(sendMessage=headerToReply1 + headerToReply2 + headerToReply3 + headerToReply4 + htmlToShow, waitMessage="Recv %d bytes\r\n" % len(headerToReply1 + headerToReply2 + headerToReply3 + headerToReply4 + htmlToShow), replyTimeOut=100)
+    
     
     def RoutineLoop(self):
         responseText = None
