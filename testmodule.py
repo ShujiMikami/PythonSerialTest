@@ -25,9 +25,10 @@ class Test:
         while flag == False:
             if self.__serialPort.in_waiting > 0:
                 responseText = self.__serialPort.readline()
-                print(responseText)
+                #print(responseText)
                 
                 if responseText == waitString.encode():
+                    print(responseText)
                     flag = True
             
             sleep(0.1)
@@ -92,13 +93,13 @@ class Test:
         htmlToShow = "<html><body>It works!</body></html>\r\n"
         
         for headerText in headerToReply:
-            self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerText)), waitMessage="> ", replyTimeOut=100)
+            self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(headerText)), waitMessage="OK\r\n", replyTimeOut=100)
             self.__sendMessage(sendMessage=headerText, waitMessage="Recv %d bytes\r\n" % len(headerText), replyTimeOut=100)       
         
-        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(htmlToShow)), waitMessage="> ", replyTimeOut=100)
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, len(htmlToShow)), waitMessage="OK\r\n", replyTimeOut=100)
         self.__sendMessage(sendMessage=htmlToShow, waitMessage="Recv %d bytes\r\n" % len(htmlToShow), replyTimeOut=100)
         
-        self.__sendMessage(sendMessage="AT+CIPCLOSE=%d\r\n" % clientID, waitMessage="OK\r\n", replyTimeOut=100)
+        #self.__sendMessage(sendMessage="AT+CIPCLOSE=%d\r\n" % clientID, waitMessage="OK\r\n", replyTimeOut=100)
     
     def RoutineLoop(self):
         responseText = None
