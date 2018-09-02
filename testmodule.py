@@ -133,7 +133,7 @@ class Test:
                 leftText = leftBytes.decode()
                 print(leftText)
                 
-                self.ReplyHTTPMessage(0)
+                self.ReplyHTTPMessage(int(responseText.split(":")[0].split(",")[1]))
     
 def TxTest():
     
