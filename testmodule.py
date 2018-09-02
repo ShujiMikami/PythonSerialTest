@@ -84,17 +84,13 @@ class Test:
         return result
     
     def ReplyHTTPMessage(self, clientID):
-        headerToReply = """HTTP/1.1 200 OK
-        Date: Sat, 1 Sep 2018 15:08:05 GMT
-        Content-type: text/html
+        headerToReply = "HTTP/1.1 200 OK\r\nDate: Sat, 1 Sep 2018 15:08:05 GMT\r\nContent-type: text/html\r\n\r\n"
         
-        \r\n"""
-        
-        htmlToShow = "<html><body>It works!</body></html>\r\n"
+        htmlToShow = "<html><body>It works!</body></html>"
         
         wholeLength = len(headerToReply) + len(htmlToShow)
         
-        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, wholeLength), waitMessage="OK\r\n>", replyTimeOut=100)
+        self.__sendMessage(sendMessage="AT+CIPSEND=%d,%d\r\n" % (clientID, wholeLength), waitMessage="> ", replyTimeOut=100)
         
         self.__sendMessage(sendMessage=headerToReply+htmlToShow, waitMessage="Recv %d bytes\r\n" % wholeLength, replyTimeOut=100)
         
